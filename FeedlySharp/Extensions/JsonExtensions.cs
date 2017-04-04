@@ -3,7 +3,6 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FeedlySharp.Extensions
 {
@@ -17,7 +16,7 @@ namespace FeedlySharp.Extensions
 
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
-      return reader.Value == null ? false : (reader.Value.ToString() == "1");
+      return reader.Value != null && (reader.Value.ToString() == "1");
     }
 
     public override bool CanConvert(Type objectType)
@@ -38,7 +37,7 @@ namespace FeedlySharp.Extensions
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
       double doubleVal;
-      bool isSuccess = Double.TryParse(reader.Value.ToString(), out doubleVal);
+      var isSuccess = double.TryParse(reader.Value.ToString(), out doubleVal);
       return reader.Value == null || !isSuccess ? default(TimeSpan) : TimeSpan.FromSeconds(doubleVal);
     }
 
@@ -54,8 +53,8 @@ namespace FeedlySharp.Extensions
   {
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {
-      DateTime date = ((DateTime)value).ToUniversalTime();
-      DateTime epoc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+      var date = ((DateTime)value).ToUniversalTime();
+      var epoc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
       var delta = date.Subtract(epoc);
 
       writer.WriteValue((int)Math.Truncate(delta.TotalMilliseconds));
@@ -93,7 +92,7 @@ namespace FeedlySharp.Extensions
 
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
-      int result = 0;
+      var result = 0;
       if (reader.Value != null)
       {
         result = Convert.ToInt32(reader.Value);
@@ -118,7 +117,7 @@ namespace FeedlySharp.Extensions
         return null;
       }
 
-      string value = reader.Value.ToString();
+      var value = reader.Value.ToString();
 
       if (Uri.IsWellFormedUriString(value, UriKind.Absolute))
       {
@@ -161,7 +160,7 @@ namespace FeedlySharp.Extensions
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
       JObject jObject;
-      List<T> results = new List<T>();
+      var results = new List<T>();
 
       // object is an array
       if (reader.TokenType == JsonToken.StartArray)
@@ -187,7 +186,7 @@ namespace FeedlySharp.Extensions
       }
 
       // Populate the object properties
-      foreach (KeyValuePair<string, JToken> item in jObject)
+      foreach (var item in jObject)
       {
         results.Add(
           serializer.Deserialize<T>(item.Value.CreateReader())

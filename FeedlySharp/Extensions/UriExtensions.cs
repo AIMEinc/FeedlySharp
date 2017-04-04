@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 
@@ -9,49 +10,40 @@ namespace FeedlySharp.Extensions
   {
     internal static Dictionary<string, string> ParseQueryString(this Uri uri)
     {
-      string uriString = uri.OriginalString;
-      string substring = uriString.Substring(((uriString.LastIndexOf('?') == -1) ? 0 : uriString.LastIndexOf('?') + 1));
+      var uriString = uri.OriginalString;
+      var substring = uriString.Substring(((uriString.LastIndexOf('?') == -1) ? 0 : uriString.LastIndexOf('?') + 1));
 
-      string[] pairs = substring.Split('&');
+      var pairs = substring.Split('&');
 
-      Dictionary<string, string> output = new Dictionary<string, string>();
-
-      foreach (string piece in pairs)
-      {
-        string[] pair = piece.Split('=');
-        output.Add(pair[0], WebUtility.UrlDecode(pair[1]));
-      }
-
-      return output;
+        return pairs.Select(piece => piece.Split('=')).ToDictionary(pair => pair[0], pair => WebUtility.UrlDecode(pair[1]));
     }
 
 
     internal static string ToQueryString(this IDictionary<string, string> dict)
     {
-      if (dict.Count == 0) return String.Empty;
+      if (dict.Count == 0) return string.Empty;
 
       var buffer = new StringBuilder();
-      int count = 0;
-      bool end = false;
+      var count = 0;
+      var end = false;
 
       foreach (var key in dict.Keys)
       {
-        if (String.IsNullOrWhiteSpace(dict[key]))
+        if (string.IsNullOrWhiteSpace(dict[key]))
         {
           continue;
         }
 
-        string value = WebUtility.UrlEncode(dict[key]);
+        var value = WebUtility.UrlEncode(dict[key]);
 
         if (count == dict.Count - 1)
         {
           end = true;
         }
 
-        if (end) buffer.AppendFormat("{0}={1}", key, value);
-        else buffer.AppendFormat("{0}={1}&", key, value);
+          buffer.AppendFormat(end ? "{0}={1}" : "{0}={1}&", key, value);
 
-        count++;
+          count++;
       }
 
       return buffer.ToString();

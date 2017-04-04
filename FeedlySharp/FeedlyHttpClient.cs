@@ -1,13 +1,10 @@
 ﻿using FeedlySharp.Extensions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +15,7 @@ namespace FeedlySharp
     public string AccessToken { get; set; }
 
 
-    public FeedlyHttpClient(Uri baseUri) : base()
+    public FeedlyHttpClient(Uri baseUri)
     {
       BaseAddress = baseUri;
       //DefaultRequestHeaders.Add("Accept", "application/json");
@@ -34,18 +31,13 @@ namespace FeedlySharp
       CancellationToken cancellationToken = default(CancellationToken)
     ) where T : class, new()
     {
-      string responseString = await Request(method, requestUri, body, bodyAsJson, isOauth, cancellationToken);
+      var responseString = await Request(method, requestUri, body, bodyAsJson, isOauth, cancellationToken).ConfigureAwait(false);
 
       if (responseString == "[]")
       {
         return new T();
       }
-      if ((new string[] { "", "{}" }).Contains(responseString))
-      {
-        return null;
-      }
-
-      return DeserializeJson<T>(responseString);
+      return (new[] { "", "{}" }).Contains(responseString) ? null : DeserializeJson<T>(responseString);
     }
 
 
@@ -58,8 +50,8 @@ namespace FeedlySharp
       CancellationToken cancellationToken = default(CancellationToken)
     )
     {
-      string append = body != null && !bodyAsJson && method == HttpMethod.Get ? ((requestUri.Contains("?") ? "&" : "?") + (body as Dictionary<string, string>).ToQueryString()) : "";
-      HttpRequestMessage request = new HttpRequestMessage(method, requestUri + append);
+      var append = body != null && !bodyAsJson && method == HttpMethod.Get ? ((requestUri.Contains("?") ? "&" : "?") + (body as Dictionary<string, string>).ToQueryString()) : "";
+      var request = new HttpRequestMessage(method, requestUri + append.Replace("%252F","/"));
 
       // content of the request
       if (body != null && !bodyAsJson && method != HttpMethod.Get)
@@ -74,22 +66,23 @@ namespace FeedlySharp
       // OAuth header
       if (isOauth)
       {
-        request.Headers.Add("Authorization", String.Format("OAuth {0}", AccessToken));
+        request.Headers.Add("Authorization", $"OAuth {AccessToken}");
       }
 
-      return await Request(request, cancellationToken);
+      
+      return await Request(request, cancellationToken).ConfigureAwait(false);
     }
 
 
     public async Task<string> Request(HttpRequestMessage request, CancellationToken cancellationToken = default(CancellationToken))
     {
       HttpResponseMessage response = null;
-      string responseString = null;
+      string responseString;
 
       // make async request
       try
       {
-        response = await SendAsync(request, cancellationToken);
+        response = await SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         // validate HTTP response
         ValidateResponse(response);
@@ -109,35 +102,34 @@ namespace FeedlySharp
       {
         request.Dispose();
 
-        if (response != null)
-        {
-          response.Dispose();
-        }
+          response?.Dispose();
       }
 
       return responseString;
     }
 
 
-    /// <summary>
-    /// Converts JSON to Pocket objects
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="json">Raw JSON response</param>
-    /// <returns></returns>
-    /// <exception cref="PocketException">Parse error.</exception>
-    private T DeserializeJson<T>(string json) where T : class, new()
+      /// <summary>
+      /// Converts JSON to Pocket objects
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      /// <param name="json">Raw JSON response</param>
+      /// <returns></returns>
+      /// <exception>Parse error.
+      ///     <cref>PocketException</cref>
+      /// </exception>
+      private T DeserializeJson<T>(string json) where T : class, new()
     {
       json = json.Replace("[]", "{}");
 
       // deserialize object
-      T parsedResponse = JsonConvert.DeserializeObject<T>(
+      var parsedResponse = JsonConvert.DeserializeObject<T>(
         json,
         new JsonSerializerSettings
         {
-          Error = (object sender, ErrorEventArgs args) =>
+          Error = (sender, args) =>
           {
-            throw new FeedlySharpException(String.Format("Parse error: {0}", args.ErrorContext.Error.Message));
+            throw new FeedlySharpException(string.Format("Parse error: {0}", args.ErrorContext.Error.Message));
           },
           Converters =
           {
@@ -154,16 +146,16 @@ namespace FeedlySharp
     }
 
 
-
-    /// <summary>
-    /// Validates the response.
-    /// </summary>
-    /// <param name="response">The response.</param>
-    /// <returns></returns>
-    /// <exception cref="PocketException">
-    /// Error retrieving response
-    /// </exception>
-    private void ValidateResponse(HttpResponseMessage response)
+      /// <summary>
+      /// Validates the response.
+      /// </summary>
+      /// <param name="response">The response.</param>
+      /// <returns></returns>
+      /// <exception>
+      /// Error retrieving response
+      ///     <cref>PocketException</cref>
+      /// </exception>
+      private void ValidateResponse(HttpResponseMessage response)
     {
       // no error found
       if (response.IsSuccessStatusCode)
@@ -185,7 +177,7 @@ namespace FeedlySharp
     {
       string result = null;
 
-      if (headers == null || String.IsNullOrEmpty(key))
+      if (headers == null || string.IsNullOrEmpty(key))
       {
         return null;
       }

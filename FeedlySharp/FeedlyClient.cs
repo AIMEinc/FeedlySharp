@@ -1,28 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FeedlySharp
 {
-  public partial class FeedlyClient : IDisposable, FeedlySharp.IFeedlyClient
+  public partial class FeedlyClient : IDisposable, IFeedlyClient
   {
     /// <summary>
     /// The environment of feedly.
     /// </summary>
     public readonly CloudEnvironment Environment;
 
-    private readonly string ClientId;
+    private readonly string _clientId;
 
-    private readonly string ClientSecret;
+    private readonly string _clientSecret;
 
-    private readonly string RedirectUri;
+    private readonly string _redirectUri;
 
-    private string CloudUri { get { return GetCloudUri(Environment); } }
+    private string CloudUri => GetCloudUri(Environment);
 
-    private string AccessToken { get; set; }
+      private string AccessToken { get; set; }
 
     private string UserId { get; set; }
 
@@ -38,15 +34,15 @@ namespace FeedlySharp
     /// <exception cref="System.ArgumentNullException">redirectUri;Authentication and token generation requires an URI to redirect to afterwards</exception>
     public FeedlyClient(CloudEnvironment environment, string clientId, string clientSecret, string redirectUri)
     {
-      if (String.IsNullOrEmpty(redirectUri))
+      if (string.IsNullOrEmpty(redirectUri))
       {
-        throw new ArgumentNullException("redirectUri", "Authentication and token generation requires an URI to redirect to afterwards");
+        throw new ArgumentNullException(nameof(redirectUri), "Authentication and token generation requires an URI to redirect to afterwards");
       }
 
       Environment = environment;
-      ClientId = clientId;
-      ClientSecret = clientSecret;
-      RedirectUri = redirectUri;
+      _clientId = clientId;
+      _clientSecret = clientSecret;
+      _redirectUri = redirectUri;
       Client = new FeedlyHttpClient(new Uri(CloudUri, UriKind.Absolute));
     }
 
@@ -73,21 +69,21 @@ namespace FeedlySharp
 
     private string GetCloudUri(CloudEnvironment environment)
     {
-      return String.Format("https://{0}.feedly.com", environment == CloudEnvironment.Production ? "cloud" : "sandbox");
+      return $"https://{(environment == CloudEnvironment.Production ? "cloud" : "sandbox")}.feedly.com";
     }
 
     private string ValueToResource(string key, string value, bool encode = true)
     {
       string text;
       if (key == "feed") text = value.StartsWith("feed/") ? value : "feed/" + value;
-      else text = value.StartsWith("user/") ? value : String.Format("user/{0}/{1}/{2}", UserId, key, value);
+      else text = value.StartsWith("user/") ? value : $"user/{UserId}/{key}/{value}";
 
       return encode ? WebUtility.UrlEncode(text) : text;
     }
 
     private string ValueToResource(ContentType type, string value, bool encode = true)
     {
-      string key = type == ContentType.Feed ? "feed" : (type == ContentType.Tag ? "tag" : (type == ContentType.SystemCategory ? "systemcategory" : "category"));
+      var key = type == ContentType.Feed ? "feed" : (type == ContentType.Tag ? "tag" : (type == ContentType.SystemCategory ? "systemcategory" : "category"));
       if (key == "systemcategory")
       {
         return encode ? WebUtility.UrlEncode(value) : value;

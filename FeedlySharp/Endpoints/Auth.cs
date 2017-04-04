@@ -22,8 +22,8 @@ namespace FeedlySharp
     {
       return String.Format("{0}/v3/auth/auth?redirect_uri={1}&client_id={2}&scope={3}&state={4}&response_type=code",
         CloudUri,
-        WebUtility.UrlEncode(RedirectUri),
-        WebUtility.UrlEncode(ClientId),
+        WebUtility.UrlEncode(_redirectUri),
+        WebUtility.UrlEncode(_clientId),
         WebUtility.UrlEncode(GetCloudUri(CloudEnvironment.Production) + "/" + scope.Trim('/')),
         WebUtility.UrlEncode(state ?? String.Empty)
       );
@@ -71,9 +71,9 @@ namespace FeedlySharp
       return await Client.Request<AccessTokenResponse>(HttpMethod.Post, "v3/auth/token", new Dictionary<string, string>()
       {
         { "code", WebUtility.UrlEncode(authenticationCode) },
-        { "client_id", ClientId },
-        { "client_secret", ClientSecret },
-        { "redirect_uri", RedirectUri },
+        { "client_id", _clientId },
+        { "client_secret", _clientSecret },
+        { "redirect_uri", _redirectUri },
         { "grant_type", "authorization_code" }
       }, false, false, cancellationToken);
     }
@@ -91,8 +91,8 @@ namespace FeedlySharp
       return await Client.Request<AccessTokenResponse>(HttpMethod.Post, "v3/auth/token", new Dictionary<string, string>()
       {
         { "refresh_token", WebUtility.UrlEncode(refreshToken) },
-        { "client_id", ClientId },
-        { "client_secret", ClientSecret },
+        { "client_id", _clientId },
+        { "client_secret", _clientSecret },
         { "grant_type", "refresh_token" }
       }, false, false, cancellationToken);
     }
@@ -110,8 +110,8 @@ namespace FeedlySharp
       await Client.Request<object>(HttpMethod.Post, "v3/auth/token", new Dictionary<string, string>()
       {
         { "refresh_token", WebUtility.UrlEncode(refreshToken) },
-        { "client_id", ClientId },
-        { "client_secret", ClientSecret },
+        { "client_id", _clientId },
+        { "client_secret", _clientSecret },
         { "grant_type", "revoke_token" }
       }, false, false, cancellationToken);
     }

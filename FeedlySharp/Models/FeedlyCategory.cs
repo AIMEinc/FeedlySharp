@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Linq;
 
 namespace FeedlySharp.Models
@@ -9,11 +8,11 @@ namespace FeedlySharp.Models
     [JsonProperty("id")]
     public string Id { get; set; }
 
-    public string Name { get { return Id == null ? String.Empty : Id.Split('/').Last(); } }
+    public string Name => Id == null ? string.Empty : Id.Split('/').Last();
 
-    [JsonProperty("label")]
+      [JsonProperty("label")]
     public string Label { get; set; }
 
-    public bool IsGlobal { get { return Name.StartsWith("global."); } }
+    public bool IsGlobal => Name.StartsWith("global.");
   }
 }

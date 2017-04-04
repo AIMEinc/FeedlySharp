@@ -1,5 +1,4 @@
-﻿using FeedlySharp.Extensions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -7,9 +6,9 @@ namespace FeedlySharp.Models
 {
   public class AuthenticationResponse
   {
-    public bool IsSuccess { get { return !String.IsNullOrWhiteSpace(Code); } }
+    public bool IsSuccess => !string.IsNullOrWhiteSpace(Code);
 
-    public string Error { get; set; }
+      public string Error { get; set; }
 
     public string Code { get; set; }
 

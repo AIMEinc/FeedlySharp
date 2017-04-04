@@ -32,10 +32,12 @@ namespace FeedlySharp
       string continuation = null,
       CancellationToken cancellationToken = default(CancellationToken))
     {
-      Dictionary<string, string> parameters = new Dictionary<string, string>();
-      parameters["streamId"] = ValueToResource(type, id);
-      parameters["ranked"] = sorting.ToString().ToLower();
-      if (count.HasValue)
+        var parameters = new Dictionary<string, string>
+        {
+            ["streamId"] = ValueToResource(type, id),
+            ["ranked"] = sorting.ToString().ToLower()
+        };
+        if (count.HasValue)
       {
         parameters["count"] = count.Value.ToString();
       }
@@ -45,11 +47,11 @@ namespace FeedlySharp
       }
       if (newerThan.HasValue)
       {
-        DateTime date = ((DateTime)newerThan.Value).ToUniversalTime();
-        DateTime epoc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var date = newerThan.Value.ToUniversalTime();
+        var epoc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         parameters["newerThan"] = Math.Truncate(date.Subtract(epoc).TotalMilliseconds).ToString();
       }
-      if (!String.IsNullOrEmpty(continuation))
+      if (!string.IsNullOrEmpty(continuation))
       {
         parameters["continuation"] = continuation;
       }
@@ -81,10 +83,12 @@ namespace FeedlySharp
       string continuation = null,
       CancellationToken cancellationToken = default(CancellationToken))
     {
-      Dictionary<string, string> parameters = new Dictionary<string, string>();
-      parameters["streamId"] = ValueToResource(type, id);
-      parameters["ranked"] = sorting.ToString().ToLower();
-      if (count.HasValue)
+        var parameters = new Dictionary<string, string>
+        {
+            ["streamId"] = ValueToResource(type, id),
+            ["ranked"] = sorting.ToString().ToLower()
+        };
+        if (count.HasValue)
       {
         parameters["count"] = count.Value.ToString();
       }
@@ -94,16 +98,16 @@ namespace FeedlySharp
       }
       if (newerThan.HasValue)
       {
-        DateTime date = ((DateTime)newerThan.Value).ToUniversalTime();
-        DateTime epoc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var date = newerThan.Value.ToUniversalTime();
+        var epoc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         parameters["newerThan"] = Math.Truncate(date.Subtract(epoc).TotalMilliseconds).ToString();
       }
-      if (!String.IsNullOrEmpty(continuation))
+      if (!string.IsNullOrEmpty(continuation))
       {
         parameters["continuation"] = continuation;
       }
 
-      return await Client.Request<FeedlyStreamEntriesResponse>(HttpMethod.Get, "v3/streams/contents", parameters, false, (type == ContentType.Category || type == ContentType.Tag), cancellationToken);
+      return await Client.Request<FeedlyStreamEntriesResponse>(HttpMethod.Get, "v3/streams/contents", parameters, false, (type == ContentType.Category || type == ContentType.Tag), cancellationToken).ConfigureAwait(false);
     }
   }
 

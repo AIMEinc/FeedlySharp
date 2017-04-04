@@ -3,15 +3,19 @@ using System;
 
 namespace FeedlySharp.Models
 {
-  public class FeedlyOrigin
-  {
-    [JsonProperty("streamId")]
-    public string Id { get; set; }
+    public class FeedlyVisual
+    {
 
-    [JsonProperty("htmlUrl")]
-    public Uri Uri { get; set; }
+        [JsonProperty("url")]
+        public Uri Uri { get; set; }
 
-    [JsonProperty("title")]
-    public string Name { get; set; }
-  }
+        [JsonProperty("width")]
+        public double Width { get; set; }
+
+        [JsonProperty("height")]
+        public double Height { get; set; }
+
+        [JsonProperty("contentType")]
+        public string ContentType { get; set; }
+    }
 }

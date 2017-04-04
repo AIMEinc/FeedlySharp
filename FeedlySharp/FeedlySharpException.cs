@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FeedlySharp
 {
@@ -12,7 +8,7 @@ namespace FeedlySharp
     /// Initializes a new instance of the <see cref="FeedlySharpException"/> class.
     /// </summary>
     public FeedlySharpException()
-      : base() { }
+    { }
 
 
     /// <summary>

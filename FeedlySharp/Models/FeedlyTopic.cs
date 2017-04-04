@@ -8,9 +8,9 @@ namespace FeedlySharp.Models
   {
     public string Id { get; set; }
 
-    public string Name { get { return Id == null ? String.Empty : Id.Split('/').Last(); } }
+    public string Name => Id == null ? string.Empty : Id.Split('/').Last();
 
-    [JsonProperty("updated")]
+      [JsonProperty("updated")]
     public DateTime? UpdateDate { get; set; }
 
     [JsonProperty("created")]

@@ -20,7 +20,7 @@ namespace FeedlySharp
     /// <returns></returns>
     public async Task<FeedlyEntry> GetEntry(string id, CancellationToken cancellationToken = default(CancellationToken))
     {
-      List<FeedlyEntry> entries = await Client.Request<List<FeedlyEntry>>(HttpMethod.Get, String.Format("v3/entries/{0}", WebUtility.UrlEncode(id)), null, false, false, cancellationToken);
+      var entries = await Client.Request<List<FeedlyEntry>>(HttpMethod.Get, $"v3/entries/{WebUtility.UrlEncode(id)}", null, false, false, cancellationToken);
       return entries != null && entries.Any() ? entries[0] : null;
     }
 

@@ -48,6 +48,8 @@
     <Compile Include="Models\FeedlyFeed.cs" />
     <Compile Include="Models\FeedlyImage.cs" />
     <Compile Include="Models\FeedlyLink.cs" />
+    <Compile Include="Models\FeedlyThumbnail.cs" />
+    <Compile Include="Models\FeedlyVisual.cs" />
     <Compile Include="Models\FeedlyOrigin.cs" />
     <Compile Include="Models\FeedlyReadOperations.cs" />
     <Compile Include="Models\FeedlySearchFeed.cs" />

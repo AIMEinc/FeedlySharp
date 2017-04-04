@@ -13,7 +13,7 @@ namespace FeedlySharp
     /// <remarks>OPML-endpoint (https://developer.feedly.com/v3/opml/#export-the-users-subscriptions-as-an-opml-file)</remarks>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns></returns>
-    public async Task<string> GetOPML(CancellationToken cancellationToken = default(CancellationToken))
+    public async Task<string> GetOpml(CancellationToken cancellationToken = default(CancellationToken))
     {
       return await Client.Request(HttpMethod.Get, "v3/opml", null, false, true, cancellationToken);
     }
@@ -26,7 +26,7 @@ namespace FeedlySharp
     /// <param name="opml">The OPML input.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns></returns>
-    public async Task<bool> ImportOPML(string opml, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task<bool> ImportOpml(string opml, CancellationToken cancellationToken = default(CancellationToken))
     {
       HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "v3/opml");
       request.Content = new StringContent(opml);

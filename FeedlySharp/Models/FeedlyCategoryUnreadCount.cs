@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FeedlySharp.Models
 {
@@ -16,6 +13,6 @@ namespace FeedlySharp.Models
 
     public string Id { get; set; }
 
-    public string Name { get { return Id == null ? String.Empty : Id.Split('/').Last(); } }
+    public string Name => Id == null ? string.Empty : Id.Split('/').Last();
   }
 }
